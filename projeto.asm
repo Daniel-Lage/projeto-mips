@@ -46,16 +46,13 @@
 .data
 	# Strings que eu uso mais de uma vez
 	br: .asciiz "\n"
-	no: .asciiz " "
 	s: .asciiz "s"
 .text
 	main:
 		jal menu
 	
 		print_str "Opção inválida\n"
-		la $t0
-		jalr 
-	
+
 	end:
 		print_str "Encerrando o programa"
 		li $v0, 10 
@@ -63,19 +60,18 @@
 	
 	menu:
 		print_str "Digite um numero entre 1 e 8 para executar o procedimento de uma questão ou 9 para sair: "
-		int_input 
-		move $s0, $v0
-		
-		beq $s0, 1, q1
-		beq $s0, 2, q2
-		beq $s0, 3, q3
-		beq $s0, 4, q4
-		beq $s0, 5, q5
-		beq $s0, 6, q6
-		beq $s0, 7, q7
-		beq $s0, 8, q8
-		beq $s0, 9, end
-		
+		int_input
+
+		beq $v0, 1, q1
+		beq $v0, 2, q2
+		beq $v0, 3, q3
+		beq $v0, 4, q4
+		beq $v0, 5, q5
+		beq $v0, 6, q6
+		beq $v0, 7, q7
+		beq $v0, 8, q8
+		beq $v0, 9, end
+
 		jr $ra
 	
 	q1:
@@ -314,5 +310,35 @@
 		b menu
 		
 	q8:
-		b menu
+		print_str "A seguir é o cardapio de uma lanchonete:\n"
+		print_str "1: Hambúrguer (R$3,00)\n"
+		print_str "2: Xbúrguer (R$2,50)\n"
+		print_str "3: Fritas (R$2,50)\n"
+		print_str "4: Refrigerante (R$1,00)\n"
+		print_str "Digite um valor entre 1 e 4 para escolher um item ou 5 para encerrar a execução: "
+		int_input
+
+		load_float $f1, 3.0
+		beq $v0, 1, item_chosen
+		load_float $f1, 2.5
+		beq $v0, 2, item_chosen
+		beq $v0, 3, item_chosen
+		load_float $f1, 1.0
+		beq $v0, 4, item_chosen
+		beq $v0, 5, total
+
+		jr $ra
+
+		item_chosen:
+			print_str "Digite a quantidade do item: "
+			float_input
+
+			mul.s $f1, $f1, $f0
+			add.s $f2, $f2, $f1
+			b q8
 		
+		total:
+			print_str "O preço total foi: "
+			print_float $f2
+			print_str_l br
+			b menu
