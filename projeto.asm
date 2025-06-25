@@ -44,10 +44,11 @@
 .end_macro
 
 .data
-	# Strings que eu uso mais de uma vez
+	# strings que eu uso mais de uma vez
 	br: .asciiz "\n"
 	s: .asciiz "s"
 .text
+.globl menu
 	menu:
 		print_str "Digite um numero entre 1 e 8 para executar o procedimento de uma questão ou 9 para sair: "
 		int_input
@@ -179,7 +180,7 @@
 		print_str "Digite um valor positivo: "
 		float_input
 		
-		# end if less than 0
+		# encerra execução se menor que 0
 		load_float $f1, 0
 		c.lt.s $f0, $f1
 		bc1t end
@@ -199,7 +200,25 @@
 		print_float $f1
 		print_str_l br
 		
-		# depois eu vejo como calcula a raiz cubica :)
+		print_str "A raiz cúbica do valor é: "
+		load_float $f3, 3.0
+		load_float $f4, 2.0
+		# primeira aproximação: x = n / 3.0
+		div.s $f1, $f0, $f3 # $f3 = x
+		
+		li $t1, 10
+		for_1:
+			mul.s $f2, $f1, $f1 # $f2 = x * x
+			div.s $f2, $f0, $f2 # $f2 = n / x^2
+			mul.s $f1, $f1, $f4 # $f1 = 2 * x
+			add.s $f1, $f1, $f2 # $f1 = 2x + n/x^2
+			div.s $f1, $f1, $f3 # $f1 = (2x + n/x^2) / 3 (novo x)
+			
+			subi $t1, $t1, 1
+			bgt $t1, 0, for_1 # repete se maior que 0
+		
+		print_float $f1
+		print_str_l br
 		
 		b menu
 
@@ -247,12 +266,12 @@
 			
 			
 			div $s0, $s2
-			mflo $s3 # hours
-			mfhi $s0 # minutes and seconds (in seconds)
+			mflo $s3 # horas
+			mfhi $s0 # resto em segundos
 			
 			div $s0, $s1
-			mflo $s4 # minutes
-			mfhi $s5 # seconds
+			mflo $s4 # minutos
+			mfhi $s5 # segundos
 			
 			beqz $s3, minutes
 				
