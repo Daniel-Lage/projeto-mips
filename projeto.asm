@@ -48,16 +48,6 @@
 	br: .asciiz "\n"
 	s: .asciiz "s"
 .text
-	main:
-		jal menu
-	
-		print_str "Opção inválida\n"
-
-	end:
-		print_str "Encerrando o programa"
-		li $v0, 10 
-		syscall
-	
 	menu:
 		print_str "Digite um numero entre 1 e 8 para executar o procedimento de uma questão ou 9 para sair: "
 		int_input
@@ -71,8 +61,15 @@
 		beq $v0, 7, q7
 		beq $v0, 8, q8
 		beq $v0, 9, end
+	
+	error:
+		print_str "Opção inválida\n"
 
-		jr $ra
+	end:
+		print_str "Encerrando o programa"
+		li $v0, 10 
+		syscall
+	
 	
 	q1:
 		print_str "Digite um valor inteiro em metros: "
@@ -140,6 +137,7 @@
 		print_str_l br
 		
 		b menu
+
 	q4:
 		print_str "Digite a primeira nota: "
 		float_input
@@ -176,6 +174,7 @@
 		print_str_l br
 		
 		b menu
+
 	q5: 
 		print_str "Digite um valor positivo: "
 		float_input
@@ -203,6 +202,7 @@
 		# depois eu vejo como calcula a raiz cubica :)
 		
 		b menu
+
 	q6:
 		print_str "Digite seu ano de nascimento: "
 		int_input
@@ -222,6 +222,7 @@
 		print_str_l br
 		
 		b menu
+
 	q7:
 		print_str "Digite um valor em segundos: "
 		int_input
@@ -240,44 +241,44 @@
 		
 		if_1:
 			print_str "s são "
-		end_if_1:
 		
-		la $s1, 60
-		la $s2, 3600
-		
-		
-		div $s0, $s2
-		mflo $s3 # hours
-		mfhi $s0 # minutes and seconds (in seconds)
-		
-		div $s0, $s1
-		mflo $s4 # minutes
-		mfhi $s5 # seconds
-		
-		beqz $s3, minutes
+			la $s1, 60
+			la $s2, 3600
 			
-		print_int $s3
-		print_str " hora"
 			
-		beq $s3, 1, one_hour
+			div $s0, $s2
+			mflo $s3 # hours
+			mfhi $s0 # minutes and seconds (in seconds)
 			
-		print_str_l s
+			div $s0, $s1
+			mflo $s4 # minutes
+			mfhi $s5 # seconds
+			
+			beqz $s3, minutes
+				
+			print_int $s3
+			print_str " hora"
+				
+			beq $s3, 1, one_hour
+				
+			print_str_l s
 			
 		one_hour:
-			
-		beqz $s0 period
-			
-		beqz $s4 if_2
-		beqz $s5 if_2
-			
-		b if_3
+			beqz $s0 period
+				
+			beqz $s4 if_2
+			beqz $s5 if_2
+				
+			b if_3
 			
 		if_2:
 			print_str " e "
 				
 			b minutes
+
 		if_3:
 			print_str ", "
+			
 		minutes:
 			beqz $s4, seconds
 			
@@ -327,7 +328,7 @@
 		beq $v0, 4, item_chosen
 		beq $v0, 5, total
 
-		jr $ra
+		b error
 
 		item_chosen:
 			print_str "Digite a quantidade do item: "
